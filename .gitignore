@@ -1,2 +1,5 @@
 /backup
 /*.lps
+/*.o
+/*.ppu
+/snake
