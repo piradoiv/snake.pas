@@ -1,7 +1,8 @@
 build: clean
-	fpc -O3 -Os -CX -XX -Xs -osnake projectsnake.lpr
+	fpc -O3 -Os -CX -XX -Xs -osnake src/projectsnake.lpr
+	mv src/snake snake
 
 clean:
-	rm -f *.o
-	rm -f *.ppu
+	rm -f src/*.o
+	rm -f src/*.ppu
 	rm -f snake

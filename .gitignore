@@ -1,5 +1,5 @@
-/backup
-/*.lps
-/*.o
-/*.ppu
-/snake
+**/backup
+**/*.lps
+**/*.o
+**/*.ppu
+**/snake
