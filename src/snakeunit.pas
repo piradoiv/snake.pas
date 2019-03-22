@@ -7,6 +7,9 @@ interface
 uses
   Classes, SysUtils, Coords, Crt;
 
+const
+  SPRITES: array[0..3] of string = ('∧', '>', 'V', '<');
+
 type
 
   { TSnake }
@@ -73,13 +76,14 @@ var
   TailPos: TPosition;
 begin
   TextColor(Black);
+
   GotoXY(Position.X, Position.Y);
-  Write('o');
+  Write(SPRITES[Ord(Direction)]);
 
   for TailPos in Tail do
   begin
     GotoXY(TailPos.X, TailPos.Y);
-    Write('x');
+    Write('S');
   end;
 end;
 
