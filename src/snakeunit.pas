@@ -5,10 +5,12 @@ unit SnakeUnit;
 interface
 
 uses
-  Classes, SysUtils, Coords, Crt;
+  Classes, SysUtils, Coords, Crt, VidUtils;
 
 const
-  SPRITES: array[0..3] of string = ('∧', '>', 'V', '<');
+  HEAD_COLOR = Black;
+  BODY_COLOR = Black;
+  BODY_ALT_COLOR = Red;
 
 type
 
@@ -26,6 +28,7 @@ type
     procedure Move;
     procedure Draw;
     procedure Grow;
+    procedure CleanTail;
   published
     property Tail: TPositionArray read FTail;
   end;
@@ -35,7 +38,7 @@ implementation
 constructor TSnake.Create;
 begin
   Direction := drEast;
-  PendingGrow := 3;
+  CleanTail;
 end;
 
 destructor TSnake.Destroy;
@@ -73,23 +76,33 @@ end;
 
 procedure TSnake.Draw;
 var
+  I: integer;
   TailPos: TPosition;
 begin
-  TextColor(Black);
+  TextColor(HEAD_COLOR);
+  TextBackground(HEAD_COLOR);
+  TextOut(Position.X, Position.Y, ' ');
 
-  GotoXY(Position.X, Position.Y);
-  Write(SPRITES[Ord(Direction)]);
-
-  for TailPos in Tail do
+  for I := Low(Tail) to High(Tail) do
   begin
-    GotoXY(TailPos.X, TailPos.Y);
-    Write('S');
+    TextBackground(BODY_COLOR);
+    if I mod 2 = 0 then
+      TextBackground(BODY_ALT_COLOR);
+
+    TailPos := Tail[I];
+    TextOut(TailPos.X, TailPos.Y, ' ');
   end;
 end;
 
 procedure TSnake.Grow;
 begin
   Inc(PendingGrow, 6);
+end;
+
+procedure TSnake.CleanTail;
+begin
+  SetLength(FTail, 0);
+  PendingGrow := 3;
 end;
 
 end.

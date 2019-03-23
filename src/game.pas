@@ -5,14 +5,23 @@ unit Game;
 interface
 
 uses
-  Classes, SysUtils, CustApp, SnakeUnit, Coords, Crt;
+  Classes, SysUtils, CustApp, SnakeUnit, Coords, Crt, VidUtils;
 
 const
   SPEED = 150;
 
+  VK_UP = #72;
+  VK_DOWN = #80;
+  VK_RIGHT = #77;
+  VK_LEFT = #75;
+  VK_ESC = #27;
+  VK_ENTER = #13;
+
 type
 
-  TGameState = (gsWelcome, gsPlaying, gsGameOver);
+  TGameState = (gsWelcome, gsStartGame, gsPlaying, gsGameOver, gsTerminate);
+
+  { TSnakeApplication }
 
   TSnakeApplication = class(TCustomApplication)
   private
@@ -22,6 +31,10 @@ type
     procedure DoWelcomeScreen;
     procedure DoPlayingScreen;
     procedure DoGameOverScreen;
+    procedure Draw;
+    procedure GameCheckCollitions;
+    procedure HandleGameKeyEvents;
+    procedure StartGame;
   protected
     procedure DoRun; override;
   public
@@ -32,68 +45,97 @@ type
 implementation
 
 procedure TSnakeApplication.DoWelcomeScreen;
-var
-  I: integer;
-  Line: string;
-  Lines: array of string;
 begin
-  State := gsPlaying;
+  State := gsStartGame;
   TextBackground(Green);
   ClrScr;
   TextColor(Black);
 
-  SetLength(Lines, 4);
-  Lines[0] := 'Snake!';
-  Lines[1] := '-----------';
-  Lines[2] := '(j) up / (k) down / (h) left / (l) right';
-  Lines[3] := 'Press any key to start';
-
-  for I := Low(Lines) to High(Lines) do
-  begin
-    Line := Lines[I];
-    GotoXY(
-      Round((ScreenWidth / 2) - (Length(Line) / 2)),
-      Round(ScreenHeight / 2) + I - 1
-      );
-    Writeln(Line);
-  end;
+  TextOutCentered([
+    'Snake!',
+    '-----------',
+    'Use arrow keys to move',
+    'Press any key to start'
+  ]);
 
   ReadKey;
 end;
 
+procedure TSnakeApplication.DoGameOverScreen;
+var
+  C: Char;
+begin
+  TextBackground(Red);
+  TextColor(White);
+  ClrScr;
+
+  TextOutCentered([
+    'Game over! :-(',
+    '--------------',
+    'Press ENTER to play again, or ESC to exit'
+  ]);
+
+  repeat
+    C := ReadKey;
+    case C of
+      VK_ESC: State := gsTerminate;
+      VK_ENTER: State := gsStartGame;
+    end;
+  until State <> gsGameOver;
+end;
+
 procedure TSnakeApplication.DoPlayingScreen;
 var
-  PressedKey: char;
-  Position: TPosition;
   CalculatedDelay: integer;
 begin
-  if KeyPressed then
-    while KeyPressed do
-    begin
-      PressedKey := ReadKey;
-      case PressedKey of
-        'j': if Snake.Direction <> drSouth then Snake.Direction := drNorth;
-        'k': if Snake.Direction <> drNorth then Snake.Direction := drSouth;
-        'l': if Snake.Direction <> drWest then Snake.Direction := drEast;
-        'h': if Snake.Direction <> drEast then Snake.Direction := drWest;
-      end;
-    end;
-
+  HandleGameKeyEvents;
   Snake.Move;
+  GameCheckCollitions;
+  if State = gsGameOver then
+    Exit;
 
+  Draw;
+
+  CalculatedDelay := SPEED - (Length(Snake.Tail) * 2);
+  if Snake.Direction in [drNorth, drSouth] then
+    CalculatedDelay := CalculatedDelay * 2;
+
+  Delay(CalculatedDelay);
+end;
+
+procedure TSnakeApplication.Draw;
+var
+  Y: integer;
+begin
+  TextBackground(Green);
+  TextColor(Green);
+  CursorOff;
+  for Y := ScreenHeight downto 1 do
+  begin
+    GotoXY(1, Y);
+    ClrEol;
+  end;
+
+  Snake.Draw;
+
+  TextColor(Red);
+  TextBackground(Green);
+  TextOut(Apple.X, Apple.Y, '@');
+
+  GotoXY(1, ScreenHeight);
+end;
+
+procedure TSnakeApplication.GameCheckCollitions;
+var
+  Position: TPosition;
+begin
   if (Snake.Position.X <= 0) or (Snake.Position.X > ScreenWidth) or
     (Snake.Position.Y <= 0) or (Snake.Position.Y > ScreenHeight) then
-  begin
     State := gsGameOver;
-    Exit;
-  end;
 
   for Position in Snake.Tail do
     if (Snake.Position.X = Position.X) and (Snake.Position.Y = Position.Y) then
-    begin
       State := gsGameOver;
-      Exit;
-    end;
 
   if (Snake.Position.X = Apple.X) and (Snake.Position.Y = Apple.Y) then
   begin
@@ -101,46 +143,52 @@ begin
     Apple.X := Random(ScreenWidth);
     Apple.Y := Random(ScreenHeight);
   end;
-
-  TextBackground(LightGray);
-  TextColor(Black);
-  ClrScr;
-
-  Snake.Draw;
-
-  GotoXY(Apple.X, Apple.Y);
-  TextColor(Red);
-  Write('d');
-
-  GotoXY(1, 1);
-  CursorOff;
-
-  CalculatedDelay := SPEED - (Length(Snake.Tail) * 2);
-  if Snake.Direction in [drNorth, drSouth] then
-    Delay(CalculatedDelay * 2)
-  else
-    Delay(CalculatedDelay);
 end;
 
-procedure TSnakeApplication.DoGameOverScreen;
+procedure TSnakeApplication.HandleGameKeyEvents;
 var
-  C: char;
+  PressedKey: char;
+  Direction: TDirection;
 begin
-  TextBackground(Red);
-  TextColor(White);
-  ClrScr;
-  Writeln('Game over');
-  Writeln('Press ''x'' to exit');
-  repeat
-    C := ReadKey;
-  until C = 'x';
-  Terminate;
+  if not KeyPressed then
+    Exit;
+
+  Direction := Snake.Direction;
+  while KeyPressed do
+  begin
+    PressedKey := ReadKey;
+    case PressedKey of
+      VK_UP: if Direction <> drSouth then
+          Snake.Direction := drNorth;
+      VK_DOWN: if Direction <> drNorth then
+          Snake.Direction := drSouth;
+      VK_RIGHT: if Direction <> drWest then
+          Snake.Direction := drEast;
+      VK_LEFT: if Direction <> drEast then
+          Snake.Direction := drWest;
+      VK_ESC: Terminate;
+    end;
+  end;
+end;
+
+procedure TSnakeApplication.StartGame;
+begin
+  State := gsPlaying;
+
+  Snake.Direction := drEast;
+  Snake.Position.X := Round(ScreenWidth / 2);
+  Snake.Position.Y := Round(ScreenHeight / 2);
+  Snake.CleanTail;
+
+  Apple.X := Random(ScreenWidth);
+  Apple.Y := Random(ScreenHeight);
 end;
 
 procedure TSnakeApplication.DoRun;
 begin
   case State of
     gsWelcome: DoWelcomeScreen;
+    gsStartGame: StartGame;
     gsPlaying: DoPlayingScreen;
     gsGameOver: DoGameOverScreen;
     else
@@ -153,13 +201,8 @@ begin
   inherited Create(TheOwner);
   Randomize;
   StopOnException := True;
-  State := gsWelcome;
   Snake := TSnake.Create;
-  Snake.Position.X := Round(ScreenWidth / 2);
-  Snake.Position.Y := Round(ScreenHeight / 2);
-
-  Apple.X := Random(ScreenWidth);
-  Apple.Y := Random(ScreenHeight);
+  State := gsWelcome;
 end;
 
 destructor TSnakeApplication.Destroy;
@@ -172,4 +215,3 @@ begin
 end;
 
 end.
-
