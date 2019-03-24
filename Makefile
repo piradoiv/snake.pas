@@ -1,5 +1,7 @@
 build: clean
-	cd src && fpc -O3 -Os -CX -XX -Xs -osnake projectsnake.lpr
+	pwd
+	ls -l src
+	fpc -O3 -Os -CX -XX -Xs -osnake src/projectsnake.lpr
 	mv src/snake snake
 
 clean:
