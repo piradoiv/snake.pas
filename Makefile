@@ -1,8 +1,7 @@
 build: clean
-	pwd
-	ls -l src
-	fpc -O3 -Os -CX -XX -Xs -osnake src/projectsnake.lpr
+	fpc -O3 -Os -CX -XX -Xs -osnake src/projectSnake.lpr
 	mv src/snake snake
+	strip snake
 
 clean:
 	rm -f src/*.o
