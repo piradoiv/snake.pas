@@ -9,7 +9,7 @@
       </Flags>
       <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
-      <Title Value="My Application"/>
+      <Title Value="Snake"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
     </General>
@@ -55,7 +55,7 @@
   <CompilerOptions>
     <Version Value="11"/>
     <Target>
-      <Filename Value="snake"/>
+      <Filename Value="../snake"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>

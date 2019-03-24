@@ -11,6 +11,8 @@ const
   HEAD_COLOR = Black;
   BODY_COLOR = Black;
   BODY_ALT_COLOR = Red;
+  GROW_AMOUNT_ON_START = 3;
+  GROW_AMOUNT_ON_EAT = 6;
 
 type
 
@@ -49,11 +51,9 @@ end;
 procedure TSnake.Move;
 var
   I, J: integer;
-  Growing: boolean;
 begin
   J := 1;
-  Growing := PendingGrow > 0;
-  if Growing then
+  if PendingGrow > 0 then
   begin
     Dec(PendingGrow);
     SetLength(FTail, Length(Tail) + 1);
@@ -96,13 +96,13 @@ end;
 
 procedure TSnake.Grow;
 begin
-  Inc(PendingGrow, 6);
+  Inc(PendingGrow, GROW_AMOUNT_ON_EAT);
 end;
 
 procedure TSnake.CleanTail;
 begin
   SetLength(FTail, 0);
-  PendingGrow := 3;
+  PendingGrow := GROW_AMOUNT_ON_START;
 end;
 
 end.
