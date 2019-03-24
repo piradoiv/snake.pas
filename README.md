@@ -1,4 +1,4 @@
-# Snake!
+# Snake! [![Build Status](https://travis-ci.org/piradoiv/snake.pas.svg?branch=master)](https://travis-ci.org/piradoiv/snake.pas)
 
 This is just a toy project to play with Free Pascal's [Crt](https://freepascal.org/docs-html/rtl/crt/index.html) unit.
 
