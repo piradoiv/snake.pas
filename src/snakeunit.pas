@@ -77,7 +77,6 @@ end;
 procedure TSnake.Draw;
 var
   I: integer;
-  TailPos: TPosition;
 begin
   TextColor(HEAD_COLOR);
   TextBackground(HEAD_COLOR);
@@ -88,9 +87,7 @@ begin
     TextBackground(BODY_COLOR);
     if I mod 2 = 0 then
       TextBackground(BODY_ALT_COLOR);
-
-    TailPos := Tail[I];
-    TextOut(TailPos.X, TailPos.Y, ' ');
+    TextOut(Tail[I].X, Tail[I].Y, ' ');
   end;
 end;
 
