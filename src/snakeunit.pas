@@ -77,10 +77,14 @@ end;
 procedure TSnake.Draw;
 var
   I: integer;
+  HeadSprite: string;
 begin
-  TextColor(HEAD_COLOR);
+  TextColor(White);
   TextBackground(HEAD_COLOR);
-  TextOut(Position.X, Position.Y, ' ');
+  HeadSprite := ':';
+  if Direction in [drNorth, drSouth] then
+    HeadSprite := '"';
+  TextOut(Position.X, Position.Y, HeadSprite);
 
   for I := Low(Tail) to High(Tail) do
   begin
