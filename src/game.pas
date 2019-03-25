@@ -33,8 +33,10 @@ type
     procedure DoPlayingScreen;
     procedure DoGameOverScreen;
     procedure Draw;
+    procedure DrawApple;
     procedure GameCheckCollitions;
     procedure HandleGameKeyEvents;
+    procedure MoveAppleToRandomPosition;
     procedure StartGame;
   protected
     procedure DoRun; override;
@@ -118,12 +120,16 @@ begin
   end;
 
   Snake.Draw;
+  DrawApple;
 
+  GotoXY(1, ScreenHeight);
+end;
+
+procedure TSnakeApplication.DrawApple;
+begin
   TextColor(Red);
   TextBackground(Green);
   TextOut(Apple.X, Apple.Y, '@');
-
-  GotoXY(1, ScreenHeight);
 end;
 
 procedure TSnakeApplication.GameCheckCollitions;
@@ -141,8 +147,7 @@ begin
   if (Snake.Position.X = Apple.X) and (Snake.Position.Y = Apple.Y) then
   begin
     Snake.Grow;
-    Apple.X := Random(ScreenWidth);
-    Apple.Y := Random(ScreenHeight);
+    MoveAppleToRandomPosition;
   end;
 end;
 
@@ -172,17 +177,22 @@ begin
   end;
 end;
 
+procedure TSnakeApplication.MoveAppleToRandomPosition;
+const
+  PADDING = 5;
+begin
+  Apple.X := PADDING + Random(ScreenWidth - PADDING);
+  Apple.Y := PADDING + Random(ScreenHeight - PADDING);
+end;
+
 procedure TSnakeApplication.StartGame;
 begin
   State := gsPlaying;
-
+  MoveAppleToRandomPosition;
   Snake.Direction := drEast;
   Snake.Position.X := Round(ScreenWidth / 2);
   Snake.Position.Y := Round(ScreenHeight / 2);
   Snake.CleanTail;
-
-  Apple.X := Random(ScreenWidth);
-  Apple.Y := Random(ScreenHeight);
 end;
 
 procedure TSnakeApplication.DoRun;
