@@ -9,6 +9,7 @@ uses
 
 procedure TextOut(X, Y: integer; Text: string);
 procedure TextOutCentered(Lines: array of const);
+procedure ClearScreen;
 
 implementation
 
@@ -31,6 +32,17 @@ begin
     TextOut(X, Y, Line);
   end;
   GotoXY(ScreenWidth, ScreenHeight);
+end;
+
+procedure ClearScreen;
+var
+  Y: integer;
+begin
+  for Y := ScreenHeight downto 1 do
+  begin
+    GotoXY(1, Y);
+    ClrEol;
+  end;
 end;
 
 end.

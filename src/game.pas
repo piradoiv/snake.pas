@@ -51,7 +51,7 @@ procedure TSnakeApplication.DoWelcomeScreen;
 begin
   State := gsStartGame;
   TextBackground(Green);
-  ClrScr;
+  ClearScreen;
   TextColor(Black);
 
   TextOutCentered([
@@ -70,7 +70,7 @@ var
 begin
   TextBackground(Red);
   TextColor(White);
-  ClrScr;
+  ClearScreen;
 
   TextOutCentered([
     'Game over! :-(',
@@ -113,11 +113,7 @@ begin
   TextBackground(Green);
   TextColor(Green);
   CursorOff;
-  for Y := ScreenHeight downto 1 do
-  begin
-    GotoXY(1, Y);
-    ClrEol;
-  end;
+  ClearScreen;
 
   Snake.Draw;
   DrawApple;
@@ -220,7 +216,7 @@ destructor TSnakeApplication.Destroy;
 begin
   NormVideo;
   CursorOn;
-  ClrScr;
+  ClearScreen;
   Snake.Free;
   inherited Destroy;
 end;
