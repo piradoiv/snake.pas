@@ -8,7 +8,8 @@ uses
   Classes, SysUtils, CustApp, SnakeUnit, Coords, Crt, VidUtils;
 
 const
-  SPEED = 150;
+  DELAY_SPEED = 150;
+  MIN_DELAY = 75;
 
   VK_UP = #72;
   VK_DOWN = #80;
@@ -96,9 +97,9 @@ begin
 
   Draw;
 
-  CalculatedDelay := SPEED - (Length(Snake.Tail) * 2);
-  if Snake.Direction in [drNorth, drSouth] then
-    CalculatedDelay := CalculatedDelay * 2;
+  CalculatedDelay := DELAY_SPEED - (Length(Snake.Tail) * 2);
+  if CalculatedDelay < MIN_DELAY then
+    CalculatedDelay := MIN_DELAY;
 
   Delay(CalculatedDelay);
 end;
