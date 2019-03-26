@@ -107,8 +107,6 @@ begin
 end;
 
 procedure TSnakeApplication.Draw;
-var
-  Y: integer;
 begin
   TextBackground(Green);
   TextColor(Green);
