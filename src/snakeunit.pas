@@ -13,6 +13,8 @@ const
   BODY_ALT_COLOR = Red;
   GROW_AMOUNT_ON_START = 3;
   GROW_AMOUNT_ON_EAT = 6;
+  SNAKE_EYES = '"';
+  SNAKE_BODY = ' ';
 
 type
 
@@ -77,21 +79,17 @@ end;
 procedure TSnake.Draw;
 var
   I: integer;
-  HeadSprite: string;
 begin
   TextColor(White);
   TextBackground(HEAD_COLOR);
-  HeadSprite := ':';
-  if Direction in [drNorth, drSouth] then
-    HeadSprite := '"';
-  TextOut(Position.X, Position.Y, HeadSprite);
+  TextOut(Position.X, Position.Y, SNAKE_EYES);
 
   for I := Low(Tail) to High(Tail) do
   begin
     TextBackground(BODY_COLOR);
     if I mod 2 = 0 then
       TextBackground(BODY_ALT_COLOR);
-    TextOut(Tail[I].X, Tail[I].Y, ' ');
+    TextOut(Tail[I].X, Tail[I].Y, SNAKE_BODY);
   end;
 end;
 
