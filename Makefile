@@ -14,6 +14,7 @@ releases:
 clean:
 	rm -f src/*.o
 	rm -f src/*.ppu
+	rm -rf src/lib
 	rm -f snake
 	rm -rf dist
 
