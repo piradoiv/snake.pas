@@ -11,7 +11,7 @@ releases:
 	mv src/snake dist/snake-macos-x86_64
 	strip dist/snake-macos-x86_64
 	cd dist && zip snake-linux-x86_64.zip snake-linux-x86_64
-	cd dist && zip snake-linux-macos-x86_64.zip snake-macos-x86_64
+	cd dist && zip snake-macos-x86_64.zip snake-macos-x86_64
 
 clean:
 	rm -f src/*.o
