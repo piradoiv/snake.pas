@@ -20,7 +20,7 @@ const
 
 type
 
-  TGameState = (gsWelcome, gsStartGame, gsPlaying, gsGameOver, gsTerminate);
+  TGameState = (gsLoading, gsWelcome, gsStartGame, gsPlaying, gsGameOver, gsTerminate);
 
   { TSnakeApplication }
 
@@ -29,6 +29,7 @@ type
     State: TGameState;
     Snake: TSnake;
     Apple: TPosition;
+    procedure DoLoadingScreen;
     procedure DoWelcomeScreen;
     procedure DoPlayingScreen;
     procedure DoGameOverScreen;
@@ -46,6 +47,14 @@ type
   end;
 
 implementation
+
+procedure TSnakeApplication.DoLoadingScreen;
+begin
+  State := gsWelcome;
+  TextBackground(Black);
+  ClearScreen;
+  Sleep(150);
+end;
 
 procedure TSnakeApplication.DoWelcomeScreen;
 begin
@@ -193,6 +202,7 @@ procedure TSnakeApplication.DoRun;
 begin
   RefreshWindowSize;
   case State of
+    gsLoading: DoLoadingScreen;
     gsWelcome: DoWelcomeScreen;
     gsStartGame: StartGame;
     gsPlaying: DoPlayingScreen;
@@ -208,7 +218,7 @@ begin
   Randomize;
   StopOnException := True;
   Snake := TSnake.Create;
-  State := gsWelcome;
+  State := gsLoading;
 end;
 
 destructor TSnakeApplication.Destroy;
