@@ -191,6 +191,7 @@ end;
 
 procedure TSnakeApplication.DoRun;
 begin
+  RefreshWindowSize;
   case State of
     gsWelcome: DoWelcomeScreen;
     gsStartGame: StartGame;

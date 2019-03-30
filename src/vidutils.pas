@@ -5,11 +5,12 @@ unit VidUtils;
 interface
 
 uses
-  Classes, SysUtils, Crt;
+  Classes, SysUtils, Crt, termio, baseunix, unix;
 
 procedure TextOut(X, Y: integer; Text: string);
 procedure TextOutCentered(Lines: array of const);
 procedure ClearScreen;
+procedure RefreshWindowSize;
 
 implementation
 
@@ -43,6 +44,25 @@ begin
     GotoXY(1, Y);
     ClrEol;
   end;
+end;
+
+Procedure RefreshWindowSize;
+{ This procedure is based on GetConsoleBuf of the Crt Unit }
+var
+  WinInfo : TWinSize;
+begin
+  fpIOCtl(TextRec(Output).Handle, TIOCGWINSZ, @Wininfo);
+  ScreenWidth := Wininfo.ws_col;
+  ScreenHeight := Wininfo.ws_row;
+  if (ScreenWidth = 0) or (ScreenHeight = 0) then
+  begin
+    ScreenWidth := 80;
+    ScreenHeight := 25;
+  end;
+
+  GetMem(ConsoleBuf, ScreenHeight * ScreenWidth * 2);
+  FillChar(ConsoleBuf^, ScreenHeight * ScreenWidth * 2, 0);
+  Window(1, 1, ScreenWidth, ScreenHeight);
 end;
 
 end.
