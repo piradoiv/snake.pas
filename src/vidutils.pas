@@ -54,12 +54,7 @@ begin
   fpIOCtl(TextRec(Output).Handle, TIOCGWINSZ, @Wininfo);
   ScreenWidth := Wininfo.ws_col;
   ScreenHeight := Wininfo.ws_row;
-  if (ScreenWidth = 0) or (ScreenHeight = 0) then
-  begin
-    ScreenWidth := 80;
-    ScreenHeight := 25;
-  end;
-
+  FreeMem(ConsoleBuf);
   GetMem(ConsoleBuf, ScreenHeight * ScreenWidth * 2);
   FillChar(ConsoleBuf^, ScreenHeight * ScreenWidth * 2, 0);
   Window(1, 1, ScreenWidth, ScreenHeight);
