@@ -1,4 +1,4 @@
-FROM ubuntu:19.04 as build
+FROM ubuntu:focal as build
 RUN apt update
 RUN apt install fpc -y
 ADD . /src
